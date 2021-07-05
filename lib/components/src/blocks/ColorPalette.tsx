@@ -122,15 +122,7 @@ interface ColorProps {
 }
 
 function renderSwatch(color: string) {
-  return (
-    <Swatch
-      key={color}
-      title={color}
-      style={{
-        background: color,
-      }}
-    />
-  );
+  return <Swatch key={color} title={color} background={color} />;
 }
 
 function renderSwatchLabel(color: string, colorDescription?: string) {

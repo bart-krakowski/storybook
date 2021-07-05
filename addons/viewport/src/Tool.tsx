@@ -24,20 +24,27 @@ const toList = memoize(50)((items: ViewportMap): ViewportItem[] => [
   ...Object.entries(items).map(([id, { name, ...rest }]) => ({ ...rest, id, title: name })),
 ]);
 
-const responsiveViewport: ViewportItem = {
+const fullViewport: ViewportItem = {
   id: 'reset',
   title: 'Reset viewport',
   styles: null,
   type: 'other',
 };
 
-const baseViewports: ViewportItem[] = [responsiveViewport];
+const responsiveViewport: ViewportItem = {
+  id: 'responsive',
+  title: 'Responsive viewport',
+  styles: null,
+  type: 'other',
+};
+
+const baseViewports: ViewportItem[] = [fullViewport, responsiveViewport];
 
 const toLinks = memoize(50)((list: ViewportItem[], active: LinkBase, set, state, close): Link[] => {
   return list
     .map((i) => {
       switch (i.id) {
-        case responsiveViewport.id: {
+        case fullViewport.id: {
           if (active.id === i.id) {
             return null;
           }
@@ -126,7 +133,7 @@ export const ViewportTool: FunctionComponent = memo(
   withTheme(({ theme }: { theme: Theme }) => {
     const {
       viewports = MINIMAL_VIEWPORTS,
-      defaultViewport = responsiveViewport.id,
+      defaultViewport = fullViewport.id,
       disable,
     } = useParameter<ViewportAddonParameter>(PARAM_KEY, {});
     const [state, setState] = useAddonState<ViewportToolState>(ADDON_ID, {
@@ -144,8 +151,7 @@ export const ViewportTool: FunctionComponent = memo(
 
     useEffect(() => {
       setState({
-        selected:
-          defaultViewport || (viewports[state.selected] ? state.selected : responsiveViewport.id),
+        selected: defaultViewport || (viewports[state.selected] ? state.selected : fullViewport.id),
         isRotated: state.isRotated,
       });
     }, [defaultViewport]);
@@ -155,7 +161,7 @@ export const ViewportTool: FunctionComponent = memo(
       list.find((i) => i.id === selected) ||
       list.find((i) => i.id === defaultViewport) ||
       list.find((i) => i.default) ||
-      responsiveViewport;
+      fullViewport;
 
     const ref = useRef<ViewportStyles>();
 
@@ -184,7 +190,7 @@ export const ViewportTool: FunctionComponent = memo(
             title="Change the size of the preview"
             active={!!styles}
             onDoubleClick={() => {
-              setState({ ...state, selected: responsiveViewport.id });
+              setState({ ...state, selected: fullViewport.id });
             }}
           >
             <Icons icon="grow" />
